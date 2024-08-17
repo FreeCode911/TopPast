@@ -4,7 +4,7 @@
 
 
 [![Run on Repl.it](https://repl.it/badge/github/FreeCode911/AnoUpload)](https://repl.it/github/FreeCode911/AnoUpload)
-- **▶️Tutorial** : https://youtu.be/ES_41VHT-t0
+- **▶️Tutorial** : [https://youtu.be/qoOkwq1HtzU](https://youtu.be/qoOkwq1HtzU)
   
 ## 📦 Installation
 
