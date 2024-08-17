@@ -1,4 +1,4 @@
-# 🚀 **TopPast**
+# ⭐ **TopPast**
 
 **TopPast** is a straightforward NPM package for anonymous pastbin. Easy to use and integrate into your Node.js projects! 🌟
 
