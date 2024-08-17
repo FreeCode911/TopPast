@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{title}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+<style>
+body {
+  background-color: #272822;
+  color: #f8f8f2;
+  font-family: 'Consolas', 'Courier New', monospace;
+  margin: 0;
+  padding: 20px;
+}
+
+.content {
+  max-width: 800px;
+  margin: 20px auto; 
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow-x: auto;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 2em;
+  color: #66d9ef; 
+  display: flex;
+  align-items: center; /* Align buttons vertically */
+  justify-content: space-between; /* Space out title and buttons */
+}
+
+.buttons {
+  /* Style the button container */
+  display: flex;
+  gap: 10px;
+}
+
+button { /* Style for both download and raw buttons */
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+pre {
+  background: #2d2d2d;
+  padding: 10px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+code {
+  color: #f8f8f2;
+}
+
+.content-footer { /* Style the footer inside content div */
+  background-color: #1e1e1e;
+  color: #808080;
+  text-align: left;
+  padding: 10px;
+  margin-top: 20px;
+  border-top: 1px solid #333; /* Add a subtle separator line */
+}
+</style>
+</head>
+<body>
+<div class="content">
+<h1>
+{title}
+<div class="buttons">
+<button id="downloadBtn">Download</button>
+<button id="rawBtn">Raw</button>
+</div>
+</h1>
+<pre id="content">{content}</pre>
+<div class="content-footer">
+<p>&copy; 2024 Lyk Cloud</p>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const contentDiv = document.getElementById('content');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const rawBtn = document.getElementById('rawBtn');
+    
+    hljs.highlightAll();
+
+    downloadBtn.addEventListener('click', () => {
+        // Function to download the content as a file
+        const contentToDownload = contentDiv.textContent;
+        const blob = new Blob([contentToDownload], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'downloaded_content.txt'; // You can customize the filename
+        link.click();
+
+        URL.revokeObjectURL(url);
+    });
+
+    rawBtn.addEventListener('click', () => {
+        // Open the raw content in a new tab
+        const rawContentWindow = window.open();
+        rawContentWindow.document.write('<pre>' + contentDiv.textContent + '</pre>');
+        rawContentWindow.document.close(); // Important for IE11 compatibility
+    });    
+});
+</script>
+</body>
+</html>

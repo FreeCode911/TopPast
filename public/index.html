@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Paste</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 2em;
+            color: #bb86fc;
+        }
+        input, textarea {
+            width: 94%;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #333;
+            color: #e0e0e0;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        textarea {
+            height: 200px;
+        }
+        input:focus, textarea:focus {
+            border-color: #bb86fc;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #6200ea;
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #3700b3;
+        }
+        button:disabled {
+            background-color: #444;
+            cursor: not-allowed;
+        }
+        .loading-spinner {
+            border: 4px solid #444;
+            border-top: 4px solid #6200ea;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -12px;
+            margin-top: -12px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow: hidden;
+        }
+        .modal-overlay {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background: #1e1e1e;
+            color: #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 90%;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .modal-content p {
+            margin: 0;
+            font-size: 1.1em;
+        }
+        .modal-content a {
+            color: #bb86fc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .modal-content a:hover {
+            text-decoration: underline;
+        }
+        .modal-content button {
+            background-color: #bb86fc;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .modal-content button:hover {
+            background-color: #6200ea;
+        }
+        /* Footer Styles */
+        footer {
+            margin-top: auto;
+            padding: 10px 0;
+            text-align: center;
+            color: #e0e0e0;
+            font-size: 0.9em;
+        }
+        footer a {
+            color: #bb86fc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <a class="github-fork-ribbon" href="https://github.com/FreeCode911/TopPast" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+
+    <div class="container">
+        <h1>Create a Paste</h1>
+        <form id="pasteForm">
+            <input id="title" name="title" type="text" placeholder="Enter title here..." required />
+            <textarea id="content" name="content" placeholder="Enter your paste here..." required></textarea>
+            <button type="submit">Create Paste
+                <div class="loading-spinner" id="spinner" style="display: none;"></div>
+            </button>
+        </form>
+        <footer>
+            <p>&copy; 2024 lykcloud. All rights reserved. | <a href="https://lykcloud.me" target="_blank">lykcloud.me</a></p>
+        </footer>
+    </div>
+
+    <!-- Modal for Messages -->
+    <div class="modal" id="modal">
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <p id="modalMessage"></p>
+                <button onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('pasteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const spinner = document.getElementById('spinner');
+            const modal = document.getElementById('modal');
+            const modalMessage = document.getElementById('modalMessage');
+
+            spinner.style.display = 'block'; // Show loading spinner
+
+            try {
+                const response = await fetch('/paste', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title, content }),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showModal(`Paste created successfully! <a href="${result.file_url}" target="_blank">${result.file_url}</a>`);
+                } else {
+                    showModal('An error occurred: ' + response.statusText);
+                }
+            } catch (error) {
+                showModal('Network error: ' + error.message);
+            } finally {
+                spinner.style.display = 'none'; // Hide loading spinner
+            }
+        });
+
+        function showModal(message) {
+            const modal = document.getElementById('modal');
+            const modalMessage = document.getElementById('modalMessage');
+            modalMessage.innerHTML = message;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
