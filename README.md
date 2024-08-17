@@ -2,6 +2,10 @@
 
 **TopPast** is a straightforward NPM package for anonymous pastbin. Easy to use and integrate into your Node.js projects! 🌟
 
+
+[![Run on Repl.it](https://repl.it/badge/github/FreeCode911/AnoUpload)](https://repl.it/github/FreeCode911/AnoUpload)
+- **▶️Tutorial** : https://youtu.be/ES_41VHT-t0
+  
 ## 📦 Installation
 
 To install the package, run:
